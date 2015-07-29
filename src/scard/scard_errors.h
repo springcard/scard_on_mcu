@@ -41,8 +41,6 @@
 #ifndef __SCARD_ERRORS_H__
 #define __SCARD_ERRORS_H__
 
-typedef unsigned short SCARD_RC;
-
 #define _SCARD_S_SUCCESS               (0x0000)
 #define _SCARD_F_INTERNAL_ERROR        (0x0001)
 #define _SCARD_E_CANCELLED             (0x0002)

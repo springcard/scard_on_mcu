@@ -58,4 +58,9 @@ void ccid_recv_wakeupFromISR(void);
 BYTE ccid_sequence(BYTE bSlot);
 void ccid_next_sequence(BYTE bSlot);
 
+void htoul(BYTE abBuffer[], DWORD dwValue);
+void htous(BYTE abBuffer[], WORD wValue);
+DWORD utohl(const BYTE abBuffer[]);
+WORD utohs(const BYTE abBuffer[]);
+
 #endif
