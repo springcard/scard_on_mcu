@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../robodoc.css" type="text/css">
+<TITLE>./docs/scard/scard_functions_c.html</TITLE>
+<!-- Source: ./src/scard/scard_functions.c -->
+<!-- Generated with ROBODoc Version 4.0.6 (Mar  8 2004) -->
+<!-- ROBODoc (c) 1994-2003 by Frans Slothouber and Jacco van Weert. -->
+</head>
+<body bgcolor="#FFFFFF">
+<hr />
+
+<h2><a name="robo5"><a href="#robo_TOC">SCARD_On_MCU/scard_functions</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scard_functions</strong> -- PC/SC-like functions to use a SpringCard Serial CCID reader in the context of a MCU
+</pre><p><strong>COPYRIGHT</strong></p>
+<pre>   Copyright (c) 2015 SPRINGCARD SAS, FRANCE - www.springcard.com
+</pre><p><strong>NOTES</strong></p>
+<pre>   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+   ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
+   TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+   PARTICULAR PURPOSE.
+</pre><p><strong>AUTHOR</strong></p>
+<pre>   Johann.D / SpringCard
+</pre>
+<hr><br><br><center><a name="robo_TOC"><br><h3>Table Of Content</h3></center><br>
+<h2>Functions</h2>
+<table cellspacing="3">
+<TR  class="even">
+<td  class="uneven"><a href="./scard_functions_c.html#robo7"><tt>
+scardConnect</tt></a></td>
+<td  class="even"><a href="./scard_functions_c.html#robo10"><tt>
+scardControl</tt></a></td>
+<td  class="uneven"><a href="./scard_functions_c.html#robo8"><tt>
+scardDisconnect</tt></a></td>
+<td  class="even"><a href="./scard_functions_c.html#robo6"><tt>
+scardStatus</tt></a></td>
+</tr>
+<TR  class="uneven">
+<td  class="even"><a href="./scard_functions_c.html#robo9"><tt>
+scardTransmit</tt></a></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<br><br><br><br>
+<hr />
+
+<h2><a name="robo6"><a href="#robo_TOC">scard_functions/scardStatus</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardStatus</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Retrieve the status of a slot:
+   - is there a card in the slot or not?
+   - is the card powered or not?
+   This is (more or less) the MCU-counterpart of SCardStatus.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardStatus</strong>(BYTE bSlot, BOOL *pfCardPresent, BOOL *pfCardPowered)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bSlot          : slot number (0 for the contactless slot)
+   BOOL *pfCardPresent : pointer to receive the 'present' flag
+   BOOL *pfCardPowered : pointer to receive the 'powered' flag
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS    : success, flags are reliable
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo7">scardConnect</a>
+</pre><p><strong>NOTES</strong></p>
+<pre>   There's no need to loop around <strong>scardStatus</strong> to wait for card insertion.
+   Looping around <a href="#robo7">scardConnect</a> is more efficient since when a card is
+   inserted, the ATR will be returned at once.
+   On the other hand, looping around <strong>scardStatus</strong> is useful to wait for
+   card removal (after a call to <a href="#robo8">scardDisconnect</a>).
+</pre>
+<hr />
+
+<h2><a name="robo7"><a href="#robo_TOC">scard_functions/scardConnect</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardConnect</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Retrieve the ATR of the card that is in a slot.
+   This is (more or less) the MCU-counterpart of SCardConnect.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardConnect</strong>(BYTE bSlot, BYTE abAtr[], WORD *wAtrLength)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bSlot                : slot number (0 for the contactless slot)
+   BYTE abAtr[]              : buffer to receive the ATR (must be at least 32-byte long)
+   WORD *wAtrLength          : IN  : the size of the ATR buffer
+                               OUT : the actual size of the ATR
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS           : success, ATR is valid
+   _SCARD_W_REMOVED_CARD      : there's no card in the slot
+   _SCARD_W_UNSUPPORTED_CARD  : there's a card in the slot, but its ATR is invalid
+   _SCARD_W_UNRESPONSIVE_CARD : there's a card in the slot, but it is mute
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo6">scardStatus</a>
+   <a href="#robo8">scardDisconnect</a>
+</pre>
+<hr />
+
+<h2><a name="robo8"><a href="#robo_TOC">scard_functions/scardDisconnect</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardDisconnect</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Disconnect from the card.
+   This is (more or less) the MCU-counterpart of SCardDisconnect.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardDisconnect</strong>(BYTE bSlot)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bSlot       : slot number (0 for the contactless slot)
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS : success
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo6">scardStatus</a>
+   <a href="#robo7">scardConnect</a>
+</pre>
+<hr />
+
+<h2><a name="robo9"><a href="#robo_TOC">scard_functions/scardTransmit</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardTransmit</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Send a Command APDU to the card, and receive its Response APDU.
+   This is the MCU-counterpart of SCardTransmit.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardTransmit</strong>(BYTE bSlot, const BYTE abSendApdu[], WORD wSendLength, BYTE abRecvApdu[], WORD *pwRecvLength)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bSlot              : slot number (0 for the contactless slot)
+   const BYTE abSendApdu[] : buffer holding the C-APDU
+   WORD wSendLength        : the size of the C-APDU
+   BYTE abRecvApdu[]       : buffer to receive the R-APDU
+   WORD *pwRecvLength      : IN  : the size of the R-APDU buffer
+                             OUT : the actual size of the R-APDU
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS        : success, R-APDU is valid
+   _SCARD_W_REMOVED_CARD   : the card has been removed during the exchange
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo7">scardConnect</a>
+</pre>
+<hr />
+
+<h2><a name="robo10"><a href="#robo_TOC">scard_functions/scardControl</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardControl</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Send a direct ('Vendor Escape') command to the reader, and receive its response.
+   This is the MCU-counterpart of SCardControl.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardControl</strong>(const BYTE abSendBuffer[], WORD wSendLength, BYTE abRecvBuffer[], WORD *pwRecvLength)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   const BYTE abSendBuffer[] : buffer holding the command
+   WORD wSendLength          : the size of the command
+   BYTE abRecvBuffer[]       : buffer to receive the response
+   WORD *pwRecvLength        : IN  : the size of the response buffer
+                               OUT : the actual size of the response
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS           : success
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo9">scardTransmit</a>
+</pre>
+<hr />
+<a name="./src/scard/scard_functions.c">Generated from ./src/scard/scard_functions.c</a> on Wed Jul 22 11:12:40 2015
+<br />
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../robodoc.css" type="text/css">
+<TITLE>./docs/scard/scard_reader_c.html</TITLE>
+<!-- Source: ./src/scard/scard_reader.c -->
+<!-- Generated with ROBODoc Version 4.0.6 (Mar  8 2004) -->
+<!-- ROBODoc (c) 1994-2003 by Frans Slothouber and Jacco van Weert. -->
+</head>
+<body bgcolor="#FFFFFF">
+<hr />
+
+<h2><a name="robo0"><a href="#robo_TOC">SCARD_On_MCU/scard_reader</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scard_reader</strong> -- Functions to control a SpringCard CCID Serial reader in the context of a MCU
+</pre><p><strong>COPYRIGHT</strong></p>
+<pre>   Copyright (c) 2015 SPRINGCARD SAS, FRANCE - www.springcard.com
+ DISCLAIMER
+   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+   ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
+   TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+   PARTICULAR PURPOSE.
+</pre><p><strong>AUTHOR</strong></p>
+<pre>   Johann.D / SpringCard
+</pre>
+<hr><br><br><center><a name="robo_TOC"><br><h3>Table Of Content</h3></center><br>
+<h2>Functions</h2>
+<table cellspacing="3">
+<TR  class="even">
+<td  class="uneven"><a href="./scard_reader_c.html#robo4"><tt>
+scardGetReaderDescriptor</tt></a></td>
+<td  class="even"><a href="./scard_reader_c.html#robo1"><tt>
+scardPingReader</tt></a></td>
+<td  class="uneven"><a href="./scard_reader_c.html#robo2"><tt>
+scardStartReader</tt></a></td>
+<td  class="even"><a href="./scard_reader_c.html#robo3"><tt>
+scardStopReader</tt></a></td>
+</tr>
+<tr  class="uneven">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<br><br><br><br>
+<hr />
+
+<h2><a name="robo1"><a href="#robo_TOC">scard_reader/scardPingReader</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardPingReader</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Test the communication with the reader
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardPingReader</strong>(void)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   None
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS         : success
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo2">scardStartReader</a>
+</pre>
+<hr />
+
+<h2><a name="robo2"><a href="#robo_TOC">scard_reader/scardStartReader</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardStartReader</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Ask the reader to start working in PC/SC mode
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardStartReader</strong>(void)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   None
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS         : success
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo1">scardPingReader</a>
+   <a href="#robo3">scardStopReader</a>
+</pre>
+<hr />
+
+<h2><a name="robo3"><a href="#robo_TOC">scard_reader/scardStopReader</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardStopReader</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Ask the reader to stop. This is useful to limit power consumption.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardStopReader</strong>(void)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   None
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS         : success
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo2">scardStartReader</a>
+</pre>
+<hr />
+
+<h2><a name="robo4"><a href="#robo_TOC">scard_reader/scardGetReaderDescriptor</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>scardGetReaderDescriptor</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Retrieve a descriptor form the reader.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>scardGetReaderDescriptor</strong>(BYTE bType, BYTE bIndex, BYTE abDescriptor[], WORD *pwDescriptorLength)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bType               : the type of the descriptor (see USB spec)
+   BYTE bIndex              : the index of the descriptor (see USB spec)
+   BYTE abDescriptor[]      : buffer to receive the response
+   WORD *pwDescriptorLength : IN  : the size of the buffer
+                              OUT : the actual size of the response
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS         : success
+   Other code if internal or communication error has occured. 
+ 
+</pre><p><strong>SEE ALSO</strong></p>
+<pre>   <a href="#robo1">scardPingReader</a>
+   <a href="#robo2">scardStartReader</a>
+</pre>
+<hr />
+<a name="./src/scard/scard_reader.c">Generated from ./src/scard/scard_reader.c</a> on Wed Jul 22 11:12:40 2015
+<br />
+</body>
+</html>

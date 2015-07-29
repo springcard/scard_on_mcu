@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../robodoc.css" type="text/css">
+<TITLE>./docs/scard/hal/hal_skel_mcu_c.html</TITLE>
+<!-- Source: ./src/scard/hal/hal_skel_mcu.c -->
+<!-- Generated with ROBODoc Version 4.0.6 (Mar  8 2004) -->
+<!-- ROBODoc (c) 1994-2003 by Frans Slothouber and Jacco van Weert. -->
+</head>
+<body bgcolor="#FFFFFF">
+<hr />
+
+<h2><a name="robo11"><a href="#robo_TOC">SCARD_On_MCU/hal_skeleton</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>hal_skeleton</strong> -- Function that must be implemented by yourself in your MCU!!!
+</pre><p><strong>COPYRIGHT</strong></p>
+<pre>   Copyright (c) 2015 SPRINGCARD SAS, FRANCE - www.springcard.com
+</pre><p><strong>NOTES</strong></p>
+<pre>   THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+   ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
+   TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+   PARTICULAR PURPOSE.
+</pre><p><strong>AUTHOR</strong></p>
+<pre>   Johann.D / SpringCard
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   The HAL must provide 
+   1. Serial communication with the reader.
+   The <a href="#robo17">serial_init</a> function shall configure the UART.
+   The <a href="#robo15">serial_send_byte</a> and <a href="#robo16">serial_send_bytes</a> are used to transmit (TX) from the MCU to the reader.
+   Receiving (RX) must be done in an ISR. The ISR shall call <a href="#robo14">serial_recv_callback</a> for every byte
+   that comes from the reader to the MCU.
+   2. Wait for the end of the communication.
+   <a href="#robo13">ccid_recv_wait</a> will be called in the context of the main task, and shall block until the ISR
+   calls <a href="#robo12">ccid_recv_wakeupFromISR</a> (this is done by <a href="#robo14">serial_recv_callback</a>).
+   If you don't have an OS, just use a volatile BOOL to do so.
+   Under a multitasking system, you must use a 'Event' or 'Semaphore' object to implement this correctly.
+   Under FreeRTOS you will typically use a Binary Semaphore as follow:
+   - <a href="#robo13">ccid_recv_wait</a> blocks using xSemaphoreTake
+   - <a href="#robo12">ccid_recv_wakeupFromISR</a> calls xSemaphoreGiveFromISR
+   - you may create the semaphore in the <a href="#robo18">platform_init</a> function.
+   3. Provide a mean to wait for a specified time, from 1 to 10000ms. This is the role of <a href="#robo19">sleep_ms</a>.
+</pre>
+<hr><br><br><center><a name="robo_TOC"><br><h3>Table Of Content</h3></center><br>
+<h2>Functions</h2>
+<table cellspacing="3">
+<TR  class="even">
+<td  class="uneven"><a href="./hal_skel_mcu_c.html#robo13"><tt>
+ccid_recv_wait</tt></a></td>
+<td  class="even"><a href="./hal_skel_mcu_c.html#robo12"><tt>
+ccid_recv_wakeupFromISR</tt></a></td>
+<td  class="uneven"><a href="./hal_skel_mcu_c.html#robo18"><tt>
+platform_init</tt></a></td>
+<td  class="even"><a href="./hal_skel_mcu_c.html#robo17"><tt>
+serial_init</tt></a></td>
+</tr>
+<TR  class="uneven">
+<td  class="even"><a href="./hal_skel_mcu_c.html#robo14"><tt>
+serial_recv_callback</tt></a></td>
+<td  class="uneven"><a href="./hal_skel_mcu_c.html#robo15"><tt>
+serial_send_byte</tt></a></td>
+<td  class="even"><a href="./hal_skel_mcu_c.html#robo16"><tt>
+serial_send_bytes</tt></a></td>
+<td  class="uneven"><a href="./hal_skel_mcu_c.html#robo19"><tt>
+sleep_ms</tt></a></td>
+</tr>
+<tr  class="even">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<br><br><br><br>
+<hr />
+
+<h2><a name="robo12"><a href="#robo_TOC">hal_skeleton/ccid_recv_wakeupFromISR</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>ccid_recv_wakeupFromISR</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   This function is invoked from the context of <a href="#robo14">serial_recv_callback</a> when a complete
+   buffer has been received. Its role is to wake the main task up. The main task
+   is waiting using <a href="#robo13">ccid_recv_wait</a>.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   void <strong>ccid_recv_wakeupFromISR</strong>(void)
+</pre>
+<hr />
+
+<h2><a name="robo13"><a href="#robo_TOC">hal_skeleton/ccid_recv_wait</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>ccid_recv_wait</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   This function is invoked in the main context to wait for a response from the reader.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   SCARD_RC <strong>ccid_recv_wait</strong>(WORD timeout_ms)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE timeout_ms          : the time to wait, in milliseconds
+</pre><p><strong>RETURNS</strong></p>
+<pre>   _SCARD_S_SUCCESS         : success, reception terminated
+   _SCARD_E_TIMEOUT         : failed
+ REMARKS
+   The implementation of the timeout doesn't have to be very precise, provided that
+   it doesn't wait shorter than expected (but a longer wait time is not an issue).
+</pre>
+<hr />
+
+<h2><a name="robo14"><a href="#robo_TOC">hal_skeleton/serial_recv_callback</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>serial_recv_callback</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   This function must be invoked by the UART's RX ISR for every byte coming from the reader to the MCU
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   void <strong>serial_recv_callback</strong>(BYTE bValue)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bValue              : RX byte
+ REMARKS
+   The function <strong>serial_recv_callback</strong> must perform some real-time analysis.
+   Please ensure that your MCU is fast enough to run <strong>serial_recv_callback</strong> totally before the next
+   byte arrives (at 38400bps, the function must take at most 260µs).
+</pre>
+<hr />
+
+<h2><a name="robo15"><a href="#robo_TOC">hal_skeleton/serial_send_byte</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>serial_send_byte</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   This function must be invoked by the UART's RX ISR for every byte coming from the reader to the MCU
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   BOOL <strong>serial_send_byte</strong>(BYTE bValue)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   BYTE bValue              : TX byte
+</pre><p><strong>RETURNS</strong></p>
+<pre>   TRUE                     : success
+   FALSE                    : failed
+ REMARKS
+   The function may return immediately or may wait for the byte to be actually transmitted;
+   whatever the implementation, the function must make sure that the caller doesn't overrun the UART.
+   The simplest implementation is to block until the UART's TX register is empty when entering this
+   function.
+</pre>
+<hr />
+
+<h2><a name="robo16"><a href="#robo_TOC">hal_skeleton/serial_send_bytes</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>serial_send_bytes</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   This is a loop around <a href="#robo15">serial_send_byte</a>
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   BOOL <strong>serial_send_bytes</strong>(const BYTE *abValue, WORD wLength)
+</pre><p><strong>INPUTS</strong></p>
+<pre>   const BYTE *abValue      : TX buffer
+   WORD wLength             : size of buffer
+</pre><p><strong>RETURNS</strong></p>
+<pre>   TRUE                     : success
+   FALSE                    : failed
+</pre>
+<hr />
+
+<h2><a name="robo17"><a href="#robo_TOC">hal_skeleton/serial_init</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>serial_init</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Configure the UART to communicate with the reader
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   BOOL <strong>serial_init</strong>(void)
+</pre><p><strong>RETURNS</strong></p>
+<pre>   TRUE                     : success
+   FALSE                    : failed
+ REMARKS
+   Default reader configuration is
+   - baudrate = 38400bps
+   - 8 data bits
+   - 1 stop bit
+   - no parity
+   - no flow control
+   Don't forget to bind the UART's RX ISR to <a href="#robo14">serial_recv_callback</a>
+</pre>
+<hr />
+
+<h2><a name="robo18"><a href="#robo_TOC">hal_skeleton/platform_init</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>platform_init</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Implement in this function the initialisation of any global variable.
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   BOOL <strong>platform_init</strong>(void)
+</pre><p><strong>RETURNS</strong></p>
+<pre>   TRUE                     : success
+   FALSE                    : failed
+</pre>
+<hr />
+
+<h2><a name="robo19"><a href="#robo_TOC">hal_skeleton/sleep_ms</a></a></h2>
+
+<p><strong>NAME</strong></p>
+<pre>   <strong>sleep_ms</strong>
+</pre><p><strong>DESCRIPTION</strong></p>
+<pre>   Suspend the execution for a specified amount of time
+</pre><p><strong>SYNOPSIS</strong></p>
+<pre>   void <strong>sleep_ms</strong>(WORD ms)
+ REMARKS
+   The implementation of the doesn't have to be very precise, provided that
+   it doesn't wait shorter than expected (but a longer wait time is not an issue).
+</pre>
+<hr />
+<a name="./src/scard/hal/hal_skel_mcu.c">Generated from ./src/scard/hal/hal_skel_mcu.c</a> on Wed Jul 22 11:12:40 2015
+<br />
+</body>
+</html>
