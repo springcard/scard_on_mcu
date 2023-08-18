@@ -4,7 +4,7 @@
 
 This project is no longer active or maintained.
 
-If you're interested in this PC/SC / CCID over Serial, please check out our new and improved project at [https://github.com/springcard/springcard-ccid-serial].
+If you're interested in this PC/SC / CCID over Serial, please check out [springcard-ccid-serial](https://github.com/springcard/springcard-ccid-serial), our new and improved version of the PC/SC-Like stack and CCID over Serial driver.
 
 ## Introduction
 
